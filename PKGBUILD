@@ -2,7 +2,7 @@
 pkgname=rpbatmanager-git
 provides=('rpbatmanager')
 conflicts=('rpbatmanager')
-pkgver=r1.a40b883
+pkgver=r2.7a788fd
 pkgrel=1
 pkgdesc="Radek Podgorny's battery manager"
 arch=('any')
@@ -24,5 +24,5 @@ package() {
 	cd "$srcdir/$pkgname"
 
 	install -D -t $pkgdir/usr/bin rpbatmanager
-	install -D -t $pkgdir/usr/lib/systemd/system/ rpbatmanager.service
+	install -D -m 0644 -t $pkgdir/usr/lib/systemd/system/ rpbatmanager.service
 }
