@@ -1,0 +1,41 @@
+#!/usr/bin/bb
+
+(def PREFIX "/sys/class/power_supply/BAT0")
+(def MIN 60)
+(def MAX 80)
+
+(defn set-full []
+  (spit (str PREFIX "/charge_control_end_threshold") 99))
+
+(defn level-to-thresh [level min max]
+  (if (< level min) max min))
+
+(defn tick []
+  (let [status (str/trim (slurp (str PREFIX "/status")))
+        level (Integer/parseInt (str/trim (slurp (str PREFIX "/capacity"))))
+        thresh (Integer/parseInt (str/trim (slurp (str PREFIX "/charge_control_end_threshold"))))
+        new-thresh (if (or (= thresh 100) (= status "Discharging"))
+                      (level-to-thresh level MIN MAX)
+                      nil)]
+    #_(prn status level thresh "->" new-thresh)
+    (when (and new-thresh (not= new-thresh thresh))
+      (prn "new thresh" new-thresh)
+      (spit (str PREFIX "/charge_control_end_threshold") new-thresh))))
+
+(defn -main []
+  (prn "rpbatmanager starting")
+  (prn (str "using " PREFIX))
+  (let [args *command-line-args*]
+    (if (= (first args) "full")
+      (do
+        (prn "setting full")
+        (set-full))
+      (loop []
+        (tick)
+        (Thread/sleep 1000)
+        (recur)))))
+
+(-main)
+
+(comment
+  (tick))

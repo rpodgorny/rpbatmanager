@@ -1,0 +1,10 @@
+[Unit]
+Description=Radek Podgorny's battery manager
+
+[Service]
+Environment="PYTHONUNBUFFERED=1"
+ExecStart=/usr/bin/rpbatmanager
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
